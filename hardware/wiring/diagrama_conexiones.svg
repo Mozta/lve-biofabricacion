@@ -1,0 +1,192 @@
+<svg viewBox="0 0 1480 900" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
+  <defs>
+    <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="1" cy="1" r="1" fill="#1B2230"/>
+    </pattern>
+    <marker id="dot" markerWidth="8" markerHeight="8" refX="4" refY="4">
+      <circle cx="4" cy="4" r="3" fill="#94A3B8"/>
+    </marker>
+  </defs>
+
+  <!-- Fondo -->
+  <rect x="0" y="0" width="1480" height="900" fill="#0B0E13"/>
+  <rect x="0" y="0" width="1480" height="900" fill="url(#grid)"/>
+
+  <!-- Encabezado -->
+  <text x="40" y="45" font-size="26" font-weight="700" fill="#E5E9EF" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">LVE — Diagrama de conexiones</text>
+  <text x="40" y="68" font-size="14" fill="#8B95A3">Extrusor de jeringa · XIAO ESP32-C3 → DRV8833 → NEMA17 · esquema de referencia, no a escala</text>
+
+  <!-- ===================== CAJAS ===================== -->
+
+  <!-- XIAO ESP32-C3 -->
+  <rect x="40" y="130" width="300" height="300" rx="14" fill="#141920" stroke="#2A323C" stroke-width="2"/>
+  <text x="190" y="168" text-anchor="middle" font-size="20" font-weight="700" fill="#E5E9EF" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">XIAO ESP32-C3</text>
+  <text x="190" y="190" text-anchor="middle" font-size="12" fill="#8B95A3">Seeed Studio</text>
+
+  <!-- Fuente Wanptek -->
+  <rect x="40" y="560" width="300" height="190" rx="14" fill="#141920" stroke="#2A323C" stroke-width="2"/>
+  <text x="190" y="597" text-anchor="middle" font-size="17" font-weight="700" fill="#E5E9EF">Fuente Wanptek DPS305U</text>
+  <text x="190" y="619" text-anchor="middle" font-size="12" fill="#8B95A3">0–30V ajustable → usar 8–9V</text>
+  <text x="190" y="637" text-anchor="middle" font-size="12" fill="#8B95A3">Límite de corriente: ~1A</text>
+
+  <!-- DRV8833 -->
+  <rect x="640" y="60" width="280" height="420" rx="14" fill="#141920" stroke="#2A323C" stroke-width="2"/>
+  <text x="780" y="100" text-anchor="middle" font-size="20" font-weight="700" fill="#E5E9EF" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">DRV8833</text>
+  <text x="780" y="122" text-anchor="middle" font-size="12" fill="#8B95A3">Puente H dual · UNIT Electronics</text>
+  <text x="965" y="152" font-size="11" font-style="italic" fill="#C084FC">↳ J1 flotante</text>
+  <text x="965" y="166" font-size="11" font-style="italic" fill="#C084FC">cable a 3V3 (✓ verificado)</text>
+  <text x="965" y="398" font-size="11" fill="#8B95A3">(FAULT, no usado)</text>
+
+  <!-- NEMA17 -->
+  <rect x="1160" y="60" width="280" height="420" rx="14" fill="#141920" stroke="#2A323C" stroke-width="2"/>
+  <text x="1300" y="100" text-anchor="middle" font-size="18" font-weight="700" fill="#E5E9EF">NEMA17 (motor a pasos)</text>
+  <text x="1300" y="123" text-anchor="middle" font-size="12" fill="#F87171">⚠ confirma bobinas con multímetro</text>
+  <text x="1300" y="260" text-anchor="middle" font-size="13" fill="#4ADE80" font-weight="600">Bobina A</text>
+  <text x="1300" y="360" text-anchor="middle" font-size="13" fill="#60A5FA" font-weight="600">Bobina B</text>
+
+  <!-- ===================== CABLEADO ===================== -->
+
+  <!-- Bus de tierra (GND) -->
+  <path d="M440,250 L440,715" stroke="#94A3B8" stroke-width="3" fill="none"/>
+  <path d="M440,250 L590,250" stroke="#94A3B8" stroke-width="3" fill="none"/>
+  <path d="M440,255 L390,255" stroke="#94A3B8" stroke-width="3" fill="none"/>
+  <path d="M440,715 L390,715" stroke="#94A3B8" stroke-width="3" fill="none"/>
+  <circle cx="440" cy="255" r="4" fill="#94A3B8"/>
+
+  <!-- Alimentación VCC -->
+  <path d="M390,680 L470,680 L470,290 L590,290" stroke="#F5A623" stroke-width="3.5" fill="none"/>
+
+  <!-- Señales lógicas D0-D3 -->
+  <path d="M390,290 L520,290 L520,370 L590,370" stroke="#5EEAD4" stroke-width="2.5" fill="none"/>
+  <path d="M390,325 L540,325 L540,330 L590,330" stroke="#5EEAD4" stroke-width="2.5" fill="none"/>
+  <path d="M390,360 L500,360 L500,210 L590,210" stroke="#5EEAD4" stroke-width="2.5" fill="none"/>
+  <path d="M390,395 L480,395 L480,170 L590,170" stroke="#5EEAD4" stroke-width="2.5" fill="none"/>
+
+  <!-- Enable: 3V3 -> EEP -->
+  <path d="M390,220 L410,220 L410,30 L1000,30 L1000,170 L970,170" stroke="#C084FC" stroke-width="2.5" fill="none" stroke-dasharray="6,5"/>
+
+  <!-- Bobina A -->
+  <path d="M970,210 L1110,210" stroke="#4ADE80" stroke-width="2.5" fill="none"/>
+  <path d="M970,250 L1110,250" stroke="#4ADE80" stroke-width="2.5" fill="none"/>
+  <!-- Bobina B -->
+  <path d="M970,290 L1110,290" stroke="#60A5FA" stroke-width="2.5" fill="none"/>
+  <path d="M970,330 L1110,330" stroke="#60A5FA" stroke-width="2.5" fill="none"/>
+
+  <!-- ===================== PINES XIAO (der.) ===================== -->
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" fill="#E5E9EF">
+    <!-- 3V3 -->
+    <line x1="340" y1="220" x2="390" y2="220" stroke="#F5A623" stroke-width="2.5"/>
+    <circle cx="390" cy="220" r="4" fill="#F5A623"/>
+    <text x="400" y="224">3V3</text>
+    <!-- GND -->
+    <line x1="340" y1="255" x2="390" y2="255" stroke="#94A3B8" stroke-width="2.5"/>
+    <circle cx="390" cy="255" r="4" fill="#94A3B8"/>
+    <text x="400" y="259">GND</text>
+    <!-- D0 -->
+    <line x1="340" y1="290" x2="390" y2="290" stroke="#5EEAD4" stroke-width="2.5"/>
+    <circle cx="390" cy="290" r="4" fill="#5EEAD4"/>
+    <text x="400" y="294">D0</text>
+    <!-- D1 -->
+    <line x1="340" y1="325" x2="390" y2="325" stroke="#5EEAD4" stroke-width="2.5"/>
+    <circle cx="390" cy="325" r="4" fill="#5EEAD4"/>
+    <text x="400" y="329">D1</text>
+    <!-- D2 -->
+    <line x1="340" y1="360" x2="390" y2="360" stroke="#5EEAD4" stroke-width="2.5"/>
+    <circle cx="390" cy="360" r="4" fill="#5EEAD4"/>
+    <text x="400" y="364">D2</text>
+    <!-- D3 -->
+    <line x1="340" y1="395" x2="390" y2="395" stroke="#5EEAD4" stroke-width="2.5"/>
+    <circle cx="390" cy="395" r="4" fill="#5EEAD4"/>
+    <text x="400" y="399">D3</text>
+  </g>
+
+  <!-- ===================== PINES FUENTE (der.) ===================== -->
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" fill="#E5E9EF">
+    <line x1="340" y1="680" x2="390" y2="680" stroke="#F5A623" stroke-width="2.5"/>
+    <circle cx="390" cy="680" r="4" fill="#F5A623"/>
+    <text x="400" y="684">(+)</text>
+    <line x1="340" y1="715" x2="390" y2="715" stroke="#94A3B8" stroke-width="2.5"/>
+    <circle cx="390" cy="715" r="4" fill="#94A3B8"/>
+    <text x="400" y="719">(−)</text>
+  </g>
+
+  <!-- ===================== PINES DRV8833 (izq.) ===================== -->
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" fill="#E5E9EF" text-anchor="end">
+    <line x1="640" y1="170" x2="590" y2="170" stroke="#5EEAD4" stroke-width="2.5"/>
+    <circle cx="590" cy="170" r="4" fill="#5EEAD4"/>
+    <text x="580" y="174">IN4</text>
+    <line x1="640" y1="210" x2="590" y2="210" stroke="#5EEAD4" stroke-width="2.5"/>
+    <circle cx="590" cy="210" r="4" fill="#5EEAD4"/>
+    <text x="580" y="214">IN3</text>
+    <line x1="640" y1="250" x2="590" y2="250" stroke="#94A3B8" stroke-width="2.5"/>
+    <circle cx="590" cy="250" r="4" fill="#94A3B8"/>
+    <text x="580" y="254">GND</text>
+    <line x1="640" y1="290" x2="590" y2="290" stroke="#F5A623" stroke-width="2.5"/>
+    <circle cx="590" cy="290" r="4" fill="#F5A623"/>
+    <text x="580" y="294">VCC</text>
+    <line x1="640" y1="330" x2="590" y2="330" stroke="#5EEAD4" stroke-width="2.5"/>
+    <circle cx="590" cy="330" r="4" fill="#5EEAD4"/>
+    <text x="580" y="334">IN2</text>
+    <line x1="640" y1="370" x2="590" y2="370" stroke="#5EEAD4" stroke-width="2.5"/>
+    <circle cx="590" cy="370" r="4" fill="#5EEAD4"/>
+    <text x="580" y="374">IN1</text>
+  </g>
+
+  <!-- ===================== PINES DRV8833 (der.) ===================== -->
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" fill="#E5E9EF">
+    <line x1="920" y1="170" x2="970" y2="170" stroke="#C084FC" stroke-width="2.5" stroke-dasharray="6,5"/>
+    <circle cx="970" cy="170" r="4" fill="#C084FC"/>
+    <text x="855" y="174">EEP</text>
+    <line x1="920" y1="210" x2="970" y2="210" stroke="#4ADE80" stroke-width="2.5"/>
+    <circle cx="970" cy="210" r="4" fill="#4ADE80"/>
+    <text x="845" y="214">OUT1</text>
+    <line x1="920" y1="250" x2="970" y2="250" stroke="#4ADE80" stroke-width="2.5"/>
+    <circle cx="970" cy="250" r="4" fill="#4ADE80"/>
+    <text x="845" y="254">OUT2</text>
+    <line x1="920" y1="290" x2="970" y2="290" stroke="#60A5FA" stroke-width="2.5"/>
+    <circle cx="970" cy="290" r="4" fill="#60A5FA"/>
+    <text x="845" y="294">OUT3</text>
+    <line x1="920" y1="330" x2="970" y2="330" stroke="#60A5FA" stroke-width="2.5"/>
+    <circle cx="970" cy="330" r="4" fill="#60A5FA"/>
+    <text x="845" y="334">OUT4</text>
+    <line x1="920" y1="370" x2="970" y2="370" stroke="#3A4250" stroke-width="2"/>
+    <circle cx="970" cy="370" r="4" fill="#3A4250"/>
+    <text x="850" y="374" fill="#8B95A3">ULT</text>
+  </g>
+
+  <!-- ===================== PINES MOTOR (izq.) ===================== -->
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" fill="#E5E9EF">
+    <circle cx="1110" cy="210" r="4" fill="#4ADE80"/>
+    <text x="1120" y="214">A+</text>
+    <circle cx="1110" cy="250" r="4" fill="#4ADE80"/>
+    <text x="1120" y="254">A−</text>
+    <circle cx="1110" cy="290" r="4" fill="#60A5FA"/>
+    <text x="1120" y="294">B+</text>
+    <circle cx="1110" cy="330" r="4" fill="#60A5FA"/>
+    <text x="1120" y="334">B−</text>
+  </g>
+
+  <!-- ===================== LEYENDA ===================== -->
+  <g font-size="13" fill="#C7CDD6">
+    <line x1="40" y1="800" x2="70" y2="800" stroke="#F5A623" stroke-width="3.5"/>
+    <text x="78" y="804">Alimentación (VCC, 8–9V)</text>
+
+    <line x1="290" y1="800" x2="320" y2="800" stroke="#94A3B8" stroke-width="3"/>
+    <text x="328" y="804">GND común</text>
+
+    <line x1="460" y1="800" x2="490" y2="800" stroke="#5EEAD4" stroke-width="2.5"/>
+    <text x="498" y="804">Señales lógicas (D0–D3 → IN1–IN4)</text>
+
+    <line x1="780" y1="800" x2="810" y2="800" stroke="#C084FC" stroke-width="2.5" stroke-dasharray="6,5"/>
+    <text x="818" y="804">Enable (3V3 → EEP)</text>
+
+    <line x1="990" y1="800" x2="1020" y2="800" stroke="#4ADE80" stroke-width="2.5"/>
+    <text x="1028" y="804">Bobina A</text>
+
+    <line x1="1130" y1="800" x2="1160" y2="800" stroke="#60A5FA" stroke-width="2.5"/>
+    <text x="1168" y="804">Bobina B</text>
+  </g>
+
+  <text x="40" y="840" font-size="13" fill="#34D399">✓ Verificado con multímetro: EEP flotante → requiere cable directo a 3V3 de la XIAO.</text>
+  <text x="40" y="865" font-size="13" fill="#F87171">⚠ Pendiente: confirma con multímetro (continuidad) qué par de cables corresponde a Bobina A y cuál a Bobina B antes de energizar.</text>
+</svg>

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>LVE — Diagrama interactivo de conexiones</title>
+<style>
+  html,body{margin:0;background:#0B0E13;}
+  .wrap{max-width:1480px;margin:0 auto;padding:8px 0 24px;}
+  svg{width:100%;height:auto;display:block;font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+
+  .net .hit{stroke:transparent;stroke-width:16;fill:none;cursor:pointer;}
+  .net .visible{fill:none;transition:stroke-width .15s ease, filter .15s ease;}
+  .net circle{transition:r .15s ease, filter .15s ease;cursor:pointer;}
+  .net text{cursor:pointer;transition:opacity .15s ease;}
+
+  .net.thin .visible{stroke-width:2.5;}
+  .net.thick .visible{stroke-width:3.2;}
+
+  .net.active.thin .visible{stroke-width:4.5;}
+  .net.active.thick .visible{stroke-width:5.5;}
+  .net.active .visible{filter:drop-shadow(0 0 8px var(--c));}
+  .net.active circle{r:6.5;filter:drop-shadow(0 0 6px var(--c));}
+  .net.active text{fill:#ffffff;}
+
+  svg.dimmed .net:not(.active) .visible{opacity:.15;}
+  svg.dimmed .net:not(.active) circle{opacity:.3;}
+  svg.dimmed .net:not(.active) text{opacity:.3;}
+
+  .net:focus{outline:none;}
+  .net:focus-visible .visible{filter:drop-shadow(0 0 6px #ffffff);}
+
+  .legend-item{cursor:pointer;}
+  .legend-item:hover .legend-swatch, .legend-item.active .legend-swatch{filter:drop-shadow(0 0 6px currentColor);}
+  .legend-item:hover text, .legend-item.active text{fill:#ffffff;}
+
+  #info-bar{fill:#0F141B;}
+  #info-text{font-size:14px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<svg id="diagram" viewBox="0 0 1480 940" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="1" cy="1" r="1" fill="#1B2230"/>
+    </pattern>
+  </defs>
+
+  <!-- Fondo -->
+  <rect x="0" y="0" width="1480" height="940" fill="#0B0E13"/>
+  <rect x="0" y="0" width="1480" height="940" fill="url(#grid)"/>
+  <rect id="bg-reset" x="0" y="0" width="1480" height="940" fill="transparent"/>
+
+  <!-- Encabezado -->
+  <text x="40" y="45" font-size="26" font-weight="700" fill="#E5E9EF" class="mono">LVE — Diagrama interactivo de conexiones</text>
+  <text x="40" y="68" font-size="14" fill="#8B95A3">Pasa el cursor (o toca) sobre un cable para iluminarlo · XIAO ESP32-C3 → DRV8833 → NEMA17</text>
+
+  <!-- ===================== CAJAS (estáticas) ===================== -->
+  <rect x="40" y="130" width="300" height="300" rx="14" fill="#141920" stroke="#2A323C" stroke-width="2"/>
+  <text x="190" y="168" text-anchor="middle" font-size="20" font-weight="700" fill="#E5E9EF" class="mono">XIAO ESP32-C3</text>
+  <text x="190" y="190" text-anchor="middle" font-size="12" fill="#8B95A3">Seeed Studio</text>
+
+  <rect x="40" y="560" width="300" height="190" rx="14" fill="#141920" stroke="#2A323C" stroke-width="2"/>
+  <text x="190" y="597" text-anchor="middle" font-size="17" font-weight="700" fill="#E5E9EF">Fuente Wanptek DPS305U</text>
+  <text x="190" y="619" text-anchor="middle" font-size="12" fill="#8B95A3">0–30V ajustable → usar 8–9V</text>
+  <text x="190" y="637" text-anchor="middle" font-size="12" fill="#8B95A3">Límite de corriente: ~1A</text>
+
+  <rect x="640" y="60" width="280" height="420" rx="14" fill="#141920" stroke="#2A323C" stroke-width="2"/>
+  <text x="780" y="100" text-anchor="middle" font-size="20" font-weight="700" fill="#E5E9EF" class="mono">DRV8833</text>
+  <text x="780" y="122" text-anchor="middle" font-size="12" fill="#8B95A3">Puente H dual · UNIT Electronics</text>
+  <text x="965" y="398" font-size="11" fill="#8B95A3">(FAULT, no usado)</text>
+  <line x1="920" y1="370" x2="970" y2="370" stroke="#3A4250" stroke-width="2"/>
+  <circle cx="970" cy="370" r="4" fill="#3A4250"/>
+  <text x="850" y="374" fill="#8B95A3" font-size="13" class="mono">ULT</text>
+
+  <rect x="1160" y="60" width="280" height="420" rx="14" fill="#141920" stroke="#2A323C" stroke-width="2"/>
+  <text x="1300" y="100" text-anchor="middle" font-size="18" font-weight="700" fill="#E5E9EF">NEMA17 (motor a pasos)</text>
+  <text x="1300" y="123" text-anchor="middle" font-size="12" fill="#F87171">⚠ confirma bobinas con multímetro</text>
+  <text x="1300" y="260" text-anchor="middle" font-size="13" fill="#4ADE80" font-weight="600">Bobina A</text>
+  <text x="1300" y="360" text-anchor="middle" font-size="13" fill="#60A5FA" font-weight="600">Bobina B</text>
+
+  <!-- ===================== NETS (interactivos) ===================== -->
+
+  <g class="net thick" data-net="gnd" tabindex="0"
+     data-label="GND común — tierra compartida entre la fuente, el DRV8833 y la XIAO. Obligatoria para que las señales tengan referencia."
+     style="--c:#94A3B8">
+    <path class="hit" d="M340,255 L390,255 M390,255 L440,255 M440,250 L440,715 M440,250 L590,250 L640,250 M440,715 L390,715 L340,715"/>
+    <path class="visible" d="M340,255 L390,255 M390,255 L440,255 M440,250 L440,715 M440,250 L590,250 L640,250 M440,715 L390,715 L340,715" stroke="#94A3B8"/>
+    <circle cx="440" cy="255" r="3" fill="#94A3B8"/>
+    <circle cx="390" cy="255" r="4" fill="#94A3B8"/>
+    <circle cx="590" cy="250" r="4" fill="#94A3B8"/>
+    <circle cx="390" cy="715" r="4" fill="#94A3B8"/>
+    <text x="400" y="259" font-size="13" fill="#E5E9EF" class="mono">GND</text>
+    <text x="580" y="254" font-size="13" fill="#E5E9EF" text-anchor="end" class="mono">GND</text>
+    <text x="400" y="719" font-size="13" fill="#E5E9EF" class="mono">(−)</text>
+  </g>
+
+  <g class="net thick" data-net="vcc" tabindex="0"
+     data-label="Alimentación VCC — de la fuente (8–9V) al DRV8833. Nunca superes 10V en este pin."
+     style="--c:#F5A623">
+    <path class="hit" d="M340,680 L390,680 M390,680 L470,680 L470,290 L590,290 M590,290 L640,290"/>
+    <path class="visible" d="M340,680 L390,680 M390,680 L470,680 L470,290 L590,290 M590,290 L640,290" stroke="#F5A623"/>
+    <circle cx="390" cy="680" r="4" fill="#F5A623"/>
+    <circle cx="590" cy="290" r="4" fill="#F5A623"/>
+    <text x="400" y="684" font-size="13" fill="#E5E9EF" class="mono">(+)</text>
+    <text x="580" y="294" font-size="13" fill="#E5E9EF" text-anchor="end" class="mono">VCC</text>
+  </g>
+
+  <g class="net thin" data-net="d0-in1" tabindex="0"
+     data-label="D0 (XIAO) → IN1 (DRV8833) — junto con IN2, controla la fase de la Bobina A del motor."
+     style="--c:#5EEAD4">
+    <path class="hit" d="M340,290 L390,290 M390,290 L520,290 L520,370 L590,370 M590,370 L640,370"/>
+    <path class="visible" d="M340,290 L390,290 M390,290 L520,290 L520,370 L590,370 M590,370 L640,370" stroke="#5EEAD4"/>
+    <circle cx="390" cy="290" r="4" fill="#5EEAD4"/>
+    <circle cx="590" cy="370" r="4" fill="#5EEAD4"/>
+    <text x="400" y="294" font-size="13" fill="#E5E9EF" class="mono">D0</text>
+    <text x="580" y="374" font-size="13" fill="#E5E9EF" text-anchor="end" class="mono">IN1</text>
+  </g>
+
+  <g class="net thin" data-net="d1-in2" tabindex="0"
+     data-label="D1 (XIAO) → IN2 (DRV8833) — junto con IN1, controla la fase de la Bobina A del motor."
+     style="--c:#5EEAD4">
+    <path class="hit" d="M340,325 L390,325 M390,325 L540,325 L540,330 L590,330 M590,330 L640,330"/>
+    <path class="visible" d="M340,325 L390,325 M390,325 L540,325 L540,330 L590,330 M590,330 L640,330" stroke="#5EEAD4"/>
+    <circle cx="390" cy="325" r="4" fill="#5EEAD4"/>
+    <circle cx="590" cy="330" r="4" fill="#5EEAD4"/>
+    <text x="400" y="329" font-size="13" fill="#E5E9EF" class="mono">D1</text>
+    <text x="580" y="334" font-size="13" fill="#E5E9EF" text-anchor="end" class="mono">IN2</text>
+  </g>
+
+  <g class="net thin" data-net="d2-in3" tabindex="0"
+     data-label="D2 (XIAO) → IN3 (DRV8833) — junto con IN4, controla la fase de la Bobina B del motor."
+     style="--c:#5EEAD4">
+    <path class="hit" d="M340,360 L390,360 M390,360 L500,360 L500,210 L590,210 M590,210 L640,210"/>
+    <path class="visible" d="M340,360 L390,360 M390,360 L500,360 L500,210 L590,210 M590,210 L640,210" stroke="#5EEAD4"/>
+    <circle cx="390" cy="360" r="4" fill="#5EEAD4"/>
+    <circle cx="590" cy="210" r="4" fill="#5EEAD4"/>
+    <text x="400" y="364" font-size="13" fill="#E5E9EF" class="mono">D2</text>
+    <text x="580" y="214" font-size="13" fill="#E5E9EF" text-anchor="end" class="mono">IN3</text>
+  </g>
+
+  <g class="net thin" data-net="d3-in4" tabindex="0"
+     data-label="D3 (XIAO) → IN4 (DRV8833) — junto con IN3, controla la fase de la Bobina B del motor."
+     style="--c:#5EEAD4">
+    <path class="hit" d="M340,395 L390,395 M390,395 L480,395 L480,170 L590,170 M590,170 L640,170"/>
+    <path class="visible" d="M340,395 L390,395 M390,395 L480,395 L480,170 L590,170 M590,170 L640,170" stroke="#5EEAD4"/>
+    <circle cx="390" cy="395" r="4" fill="#5EEAD4"/>
+    <circle cx="590" cy="170" r="4" fill="#5EEAD4"/>
+    <text x="400" y="399" font-size="13" fill="#E5E9EF" class="mono">D3</text>
+    <text x="580" y="174" font-size="13" fill="#E5E9EF" text-anchor="end" class="mono">IN4</text>
+  </g>
+
+  <g class="net thin" data-net="enable" tabindex="0"
+     data-label="3V3 (XIAO) → EEP (DRV8833) — mantiene el driver despierto. Verificado con multímetro: EEP flotante, por eso este cable es obligatorio."
+     style="--c:#C084FC">
+    <path class="hit" d="M340,220 L390,220 M390,220 L410,220 L410,30 L1000,30 L1000,170 L970,170 M970,170 L920,170"/>
+    <path class="visible" d="M340,220 L390,220 M390,220 L410,220 L410,30 L1000,30 L1000,170 L970,170 M970,170 L920,170" stroke="#C084FC" stroke-dasharray="6,5"/>
+    <circle cx="390" cy="220" r="4" fill="#C084FC"/>
+    <circle cx="970" cy="170" r="4" fill="#C084FC"/>
+    <text x="400" y="224" font-size="13" fill="#E5E9EF" class="mono">3V3</text>
+    <text x="855" y="174" font-size="13" fill="#E5E9EF" class="mono">EEP</text>
+  </g>
+
+  <g class="net thin" data-net="coilA-plus" tabindex="0"
+     data-label="OUT1 (DRV8833) → Bobina A (+) del motor."
+     style="--c:#4ADE80">
+    <path class="hit" d="M920,210 L970,210 M970,210 L1110,210 M1110,210 L1160,210"/>
+    <path class="visible" d="M920,210 L970,210 M970,210 L1110,210 M1110,210 L1160,210" stroke="#4ADE80"/>
+    <circle cx="970" cy="210" r="4" fill="#4ADE80"/>
+    <circle cx="1110" cy="210" r="4" fill="#4ADE80"/>
+    <text x="845" y="214" font-size="13" fill="#E5E9EF" class="mono">OUT1</text>
+    <text x="1120" y="214" font-size="13" fill="#E5E9EF" class="mono">A+</text>
+  </g>
+
+  <g class="net thin" data-net="coilA-minus" tabindex="0"
+     data-label="OUT2 (DRV8833) → Bobina A (−) del motor."
+     style="--c:#4ADE80">
+    <path class="hit" d="M920,250 L970,250 M970,250 L1110,250 M1110,250 L1160,250"/>
+    <path class="visible" d="M920,250 L970,250 M970,250 L1110,250 M1110,250 L1160,250" stroke="#4ADE80"/>
+    <circle cx="970" cy="250" r="4" fill="#4ADE80"/>
+    <circle cx="1110" cy="250" r="4" fill="#4ADE80"/>
+    <text x="845" y="254" font-size="13" fill="#E5E9EF" class="mono">OUT2</text>
+    <text x="1120" y="254" font-size="13" fill="#E5E9EF" class="mono">A−</text>
+  </g>
+
+  <g class="net thin" data-net="coilB-plus" tabindex="0"
+     data-label="OUT3 (DRV8833) → Bobina B (+) del motor."
+     style="--c:#60A5FA">
+    <path class="hit" d="M920,290 L970,290 M970,290 L1110,290 M1110,290 L1160,290"/>
+    <path class="visible" d="M920,290 L970,290 M970,290 L1110,290 M1110,290 L1160,290" stroke="#60A5FA"/>
+    <circle cx="970" cy="290" r="4" fill="#60A5FA"/>
+    <circle cx="1110" cy="290" r="4" fill="#60A5FA"/>
+    <text x="845" y="294" font-size="13" fill="#E5E9EF" class="mono">OUT3</text>
+    <text x="1120" y="294" font-size="13" fill="#E5E9EF" class="mono">B+</text>
+  </g>
+
+  <g class="net thin" data-net="coilB-minus" tabindex="0"
+     data-label="OUT4 (DRV8833) → Bobina B (−) del motor."
+     style="--c:#60A5FA">
+    <path class="hit" d="M920,330 L970,330 M970,330 L1110,330 M1110,330 L1160,330"/>
+    <path class="visible" d="M920,330 L970,330 M970,330 L1110,330 M1110,330 L1160,330" stroke="#60A5FA"/>
+    <circle cx="970" cy="330" r="4" fill="#60A5FA"/>
+    <circle cx="1110" cy="330" r="4" fill="#60A5FA"/>
+    <text x="845" y="334" font-size="13" fill="#E5E9EF" class="mono">OUT4</text>
+    <text x="1120" y="334" font-size="13" fill="#E5E9EF" class="mono">B−</text>
+  </g>
+
+  <!-- ===================== LEYENDA (también interactiva, agrupa nets) ===================== -->
+  <g class="legend-item" data-nets="gnd" tabindex="0" style="color:#94A3B8">
+    <line class="legend-swatch" x1="40" y1="800" x2="70" y2="800" stroke="#94A3B8" stroke-width="3.5"/>
+    <text x="78" y="804" font-size="13" fill="#C7CDD6">GND común</text>
+  </g>
+  <g class="legend-item" data-nets="vcc" tabindex="0" style="color:#F5A623">
+    <line class="legend-swatch" x1="230" y1="800" x2="260" y2="800" stroke="#F5A623" stroke-width="3.5"/>
+    <text x="268" y="804" font-size="13" fill="#C7CDD6">Alimentación (8–9V)</text>
+  </g>
+  <g class="legend-item" data-nets="d0-in1,d1-in2,d2-in3,d3-in4" tabindex="0" style="color:#5EEAD4">
+    <line class="legend-swatch" x1="470" y1="800" x2="500" y2="800" stroke="#5EEAD4" stroke-width="3"/>
+    <text x="508" y="804" font-size="13" fill="#C7CDD6">Señales lógicas (D0–D3)</text>
+  </g>
+  <g class="legend-item" data-nets="enable" tabindex="0" style="color:#C084FC">
+    <line class="legend-swatch" x1="750" y1="800" x2="780" y2="800" stroke="#C084FC" stroke-width="3" stroke-dasharray="6,5"/>
+    <text x="788" y="804" font-size="13" fill="#C7CDD6">Enable (3V3 → EEP)</text>
+  </g>
+  <g class="legend-item" data-nets="coilA-plus,coilA-minus" tabindex="0" style="color:#4ADE80">
+    <line class="legend-swatch" x1="990" y1="800" x2="1020" y2="800" stroke="#4ADE80" stroke-width="3"/>
+    <text x="1028" y="804" font-size="13" fill="#C7CDD6">Bobina A</text>
+  </g>
+  <g class="legend-item" data-nets="coilB-plus,coilB-minus" tabindex="0" style="color:#60A5FA">
+    <line class="legend-swatch" x1="1130" y1="800" x2="1160" y2="800" stroke="#60A5FA" stroke-width="3"/>
+    <text x="1168" y="804" font-size="13" fill="#C7CDD6">Bobina B</text>
+  </g>
+
+  <text x="40" y="836" font-size="13" fill="#34D399">✓ Verificado con multímetro: EEP flotante → requiere cable directo a 3V3 de la XIAO.</text>
+  <text x="40" y="860" font-size="13" fill="#F87171">⚠ Pendiente: confirma con multímetro qué par de cables corresponde a Bobina A y cuál a Bobina B.</text>
+
+  <!-- Barra de info -->
+  <rect id="info-bar" x="0" y="895" width="1480" height="45"/>
+  <text id="info-text" x="40" y="923" fill="#C7CDD6">Pasa el cursor (o toca) sobre un cable o un ítem de la leyenda para ver el detalle de esa conexión.</text>
+</svg>
+</div>
+
+<script>
+(function(){
+  const svg = document.getElementById('diagram');
+  const info = document.getElementById('info-text');
+  const defaultInfo = info.textContent;
+  const nets = Array.from(svg.querySelectorAll('.net'));
+  const legendItems = Array.from(svg.querySelectorAll('.legend-item'));
+  const bg = document.getElementById('bg-reset');
+  let pinned = null; // key currently "pinned" by click/tap
+
+  function netsFor(key){
+    // key is either a single net id or a comma list (from legend)
+    return key.split(',');
+  }
+
+  function highlight(ids, label){
+    svg.classList.add('dimmed');
+    nets.forEach(n => n.classList.toggle('active', ids.includes(n.getAttribute('data-net'))));
+    legendItems.forEach(l => l.classList.toggle('active', l.getAttribute('data-nets') === ids.join(',')));
+    info.textContent = label;
+  }
+
+  function clear(){
+    if (pinned) return;
+    svg.classList.remove('dimmed');
+    nets.forEach(n => n.classList.remove('active'));
+    legendItems.forEach(l => l.classList.remove('active'));
+    info.textContent = defaultInfo;
+  }
+
+  function wireUp(el, key, label){
+    el.addEventListener('mouseenter', () => { if (!pinned) highlight(netsFor(key), label); });
+    el.addEventListener('mouseleave', clear);
+    el.addEventListener('focus', () => highlight(netsFor(key), label));
+    el.addEventListener('blur', clear);
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (pinned === key) { pinned = null; clear(); }
+      else { pinned = key; highlight(netsFor(key), label); }
+    });
+  }
+
+  nets.forEach(n => wireUp(n, n.getAttribute('data-net'), n.getAttribute('data-label')));
+  legendItems.forEach(l => {
+    const ids = l.getAttribute('data-nets');
+    const first = document.querySelector('.net[data-net="' + ids.split(',')[0] + '"]');
+    const label = first ? 'Grupo: ' + (first.getAttribute('data-label')) : '';
+    wireUp(l, ids, label);
+  });
+
+  bg.addEventListener('click', () => { pinned = null; clear(); });
+})();
+</script>
+</body>
+</html>
