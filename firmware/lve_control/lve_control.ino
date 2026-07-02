@@ -5,11 +5,15 @@
 //   D0 -> IN1   D1 -> IN2   D2 -> IN3   D3 -> IN4
 //   3V3 -> EEP  (EEP estaba flotante, se confirmó con multímetro)
 //   GND común entre XIAO, DRV8833 y la fuente
+//   D4 -> resistencia 220ohm -> LED azul (+) -> LED (-) -> GND
+//         (LED indicador: encendido mientras el motor está en operación)
 
 const int IN1 = D0;
 const int IN2 = D1;
 const int IN3 = D2;
 const int IN4 = D3;
+
+const int LED_PIN = D4;  // LED azul indicador de operación (D4 -> resistencia 220ohm -> LED -> GND)
 
 // Secuencia de paso completo (full-step), motor bipolar
 const int SEQ_LEN = 4;
@@ -31,6 +35,7 @@ void escribirPaso(int a1, int a2, int b1, int b2) {
 
 // direccion: 1 = extruir, -1 = retraer
 void step(int direccion, int pasos) {
+  digitalWrite(LED_PIN, HIGH);  // en operación
   for (int p = 0; p < pasos; p++) {
     for (int i = 0; i < SEQ_LEN; i++) {
       int idx = (direccion == 1) ? i : (SEQ_LEN - 1 - i);
@@ -39,6 +44,7 @@ void step(int direccion, int pasos) {
     }
   }
   escribirPaso(0, 0, 0, 0);  // apaga bobinas al terminar, evita calentamiento en reposo
+  digitalWrite(LED_PIN, LOW);  // fin de operación
 }
 
 void setup() {
@@ -46,6 +52,8 @@ void setup() {
   pinMode(IN2, OUTPUT);
   pinMode(IN3, OUTPUT);
   pinMode(IN4, OUTPUT);
+  pinMode(LED_PIN, OUTPUT);
+  digitalWrite(LED_PIN, LOW);
 
   Serial.begin(115200);
   delay(300);
