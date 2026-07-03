@@ -11,7 +11,13 @@ router = APIRouter(prefix="/config", tags=["config"])
 def _get_or_create(db: Session) -> models.Calibration:
     cal = db.query(models.Calibration).first()
     if not cal:
-        cal = models.Calibration(speed_ms=5)
+        cal = models.Calibration(
+            speed_ms=5,
+            steps_per_mm=160.0,
+            syringe_id_mm=26.7,
+            syringe_volume_ml=60.0,
+            thread_pitch_mm=1.25,
+        )
         db.add(cal)
         db.commit()
         db.refresh(cal)

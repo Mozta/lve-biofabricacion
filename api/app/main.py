@@ -11,15 +11,44 @@ Arranque:
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from sqlalchemy import text
 
-from .db import init_db
+from .db import engine, init_db
 from .routers import config, control, tests
 from .serial_link import create_link
+
+
+def _migrate(eng):
+    """Agrega columnas nuevas a DB existente; no-op si ya existen. Rellena defaults físicos."""
+    alter_stmts = [
+        "ALTER TABLE calibration ADD COLUMN syringe_volume_ml REAL",
+        "ALTER TABLE calibration ADD COLUMN thread_pitch_mm REAL",
+    ]
+    with eng.begin() as conn:
+        for s in alter_stmts:
+            try:
+                conn.execute(text(s))
+            except Exception:
+                pass
+        # Rellena defaults en filas existentes que quedaron con NULL
+        conn.execute(text(
+            "UPDATE calibration SET steps_per_mm = 160.0 WHERE steps_per_mm IS NULL"
+        ))
+        conn.execute(text(
+            "UPDATE calibration SET syringe_id_mm = 26.7 WHERE syringe_id_mm IS NULL"
+        ))
+        conn.execute(text(
+            "UPDATE calibration SET syringe_volume_ml = 60.0 WHERE syringe_volume_ml IS NULL"
+        ))
+        conn.execute(text(
+            "UPDATE calibration SET thread_pitch_mm = 1.25 WHERE thread_pitch_mm IS NULL"
+        ))
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     init_db()
+    _migrate(engine)
     app.state.link = create_link()  # real o mock según LVE_MOCK / LVE_PORT
     yield
     app.state.link.close()

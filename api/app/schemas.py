@@ -82,6 +82,8 @@ class CalibrationOut(BaseModel):
     syringe_id_mm: Optional[float] = None
     esp32_port: Optional[str] = None
     speed_ms: Optional[int] = None
+    syringe_volume_ml: Optional[float] = None
+    thread_pitch_mm: Optional[float] = None
     updated_at: Optional[datetime] = None
     model_config = _FROM_ATTRS
 
@@ -91,3 +93,5 @@ class CalibrationUpdate(BaseModel):
     syringe_id_mm: Optional[float] = None
     esp32_port: Optional[str] = None
     speed_ms: Optional[int] = None
+    syringe_volume_ml: Optional[float] = None
+    thread_pitch_mm: Optional[float] = None

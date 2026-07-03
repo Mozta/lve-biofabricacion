@@ -21,6 +21,8 @@ class Calibration(Base):
     syringe_id_mm = Column(Float, nullable=True)    # diámetro interno del barril de la jeringa
     esp32_port = Column(String, nullable=True)      # puerto serial del ESP32-C3
     speed_ms = Column(Integer, default=5)           # delay entre micro-pasos por defecto
+    syringe_volume_ml = Column(Float, nullable=True, default=60.0)
+    thread_pitch_mm = Column(Float, nullable=True, default=1.25)
     updated_at = Column(DateTime, default=_now, onupdate=_now)
 
 
