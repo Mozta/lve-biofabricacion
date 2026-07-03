@@ -7,6 +7,15 @@
 //   GND común entre XIAO, DRV8833 y la fuente
 //   D4 -> resistencia 220ohm -> LED azul (+) -> LED (-) -> GND
 //         (LED indicador: encendido mientras el motor está en operación)
+//
+// Protocolo Serial (115200 baud, line ending: Newline):
+//   e<pasos>  -> extruye              (ej: e200)
+//   r<pasos>  -> retrae               (ej: r200)
+//   v<ms>     -> velocidad, delay entre micro-pasos (ej: v5)
+//   s         -> STOP: aborta el movimiento en curso
+//   p         -> imprime la posición actual
+// Respuestas: "POS <n>" tras cada movimiento/consulta, seguido de "Listo."
+// (el puente FastAPI parsea "POS " para la posición y usa "Listo." como fin de comando)
 
 const int IN1 = D0;
 const int IN2 = D1;
@@ -24,7 +33,9 @@ const bool secuencia[SEQ_LEN][4] = {
   {1, 0, 0, 1}
 };
 
-int stepDelayMs = 5;  // delay entre micro-pasos; sube el número para ir más lento
+int stepDelayMs = 5;   // delay entre micro-pasos; sube el número para ir más lento
+long posicion = 0;     // pasos netos acumulados (e = +, r = -), en unidades del comando
+bool detener = false;  // se pone true cuando llega 's' durante un movimiento
 
 void escribirPaso(int a1, int a2, int b1, int b2) {
   digitalWrite(IN1, a1);
@@ -33,15 +44,30 @@ void escribirPaso(int a1, int a2, int b1, int b2) {
   digitalWrite(IN4, b2);
 }
 
+void reportarPosicion() {
+  Serial.print("POS ");
+  Serial.println(posicion);
+}
+
 // direccion: 1 = extruir, -1 = retraer
 void step(int direccion, int pasos) {
+  detener = false;
   digitalWrite(LED_PIN, HIGH);  // en operación
   for (int p = 0; p < pasos; p++) {
+    // Chequeo de stop: durante el movimiento lo único que manda el host es 's'.
+    // Con stepDelayMs=5 esto se evalúa ~cada 20 ms -> aborto responsivo.
+    if (Serial.available()) {
+      char c = Serial.read();
+      if (c == 's' || c == 'S') detener = true;
+    }
+    if (detener) break;
+
     for (int i = 0; i < SEQ_LEN; i++) {
       int idx = (direccion == 1) ? i : (SEQ_LEN - 1 - i);
       escribirPaso(secuencia[idx][0], secuencia[idx][1], secuencia[idx][2], secuencia[idx][3]);
       delay(stepDelayMs);
     }
+    posicion += direccion;
   }
   escribirPaso(0, 0, 0, 0);  // apaga bobinas al terminar, evita calentamiento en reposo
   digitalWrite(LED_PIN, LOW);  // fin de operación
@@ -61,30 +87,57 @@ void setup() {
   Serial.println("  e<pasos>  -> extruye   (ej: e200)");
   Serial.println("  r<pasos>  -> retrae    (ej: r200)");
   Serial.println("  v<ms>     -> velocidad, delay entre micro-pasos (ej: v5)");
+  Serial.println("  s         -> STOP (aborta el movimiento en curso)");
+  Serial.println("  p         -> posicion actual");
+  reportarPosicion();
 }
 
 void loop() {
-  if (Serial.available()) {
-    String linea = Serial.readStringUntil('\n');
-    linea.trim();
-    if (linea.length() < 2) return;
+  if (!Serial.available()) return;
 
-    char cmd = linea.charAt(0);
-    int valor = linea.substring(1).toInt();
+  String linea = Serial.readStringUntil('\n');
+  linea.trim();
+  if (linea.length() < 1) return;
 
-    if (cmd == 'e') {
-      Serial.print("Extruyendo "); Serial.print(valor); Serial.println(" pasos...");
-      step(1, valor);
-      Serial.println("Listo.");
-    } else if (cmd == 'r') {
-      Serial.print("Retrayendo "); Serial.print(valor); Serial.println(" pasos...");
-      step(-1, valor);
-      Serial.println("Listo.");
-    } else if (cmd == 'v') {
-      stepDelayMs = valor;
-      Serial.print("Velocidad ajustada: "); Serial.print(valor); Serial.println(" ms entre micro-pasos");
-    } else {
-      Serial.println("Comando no reconocido. Usa e<pasos>, r<pasos> o v<ms>.");
-    }
+  char cmd = linea.charAt(0);
+
+  // Comandos sin argumento.
+  // Nota: si 's' llega DURANTE un movimiento, lo consume step() (no llega aquí);
+  // este handler solo aplica cuando el motor ya está en reposo.
+  if (cmd == 's' || cmd == 'S') {
+    Serial.println("STOP");
+    reportarPosicion();
+    Serial.println("Listo.");
+    return;
+  }
+  if (cmd == 'p' || cmd == 'P') {
+    reportarPosicion();
+    Serial.println("Listo.");
+    return;
+  }
+
+  // Comandos con argumento numérico.
+  if (linea.length() < 2) {
+    Serial.println("Comando no reconocido. Usa e<pasos>, r<pasos>, v<ms>, s o p.");
+    return;
+  }
+  int valor = linea.substring(1).toInt();
+
+  if (cmd == 'e') {
+    Serial.print("Extruyendo "); Serial.print(valor); Serial.println(" pasos...");
+    step(1, valor);
+    reportarPosicion();
+    Serial.println("Listo.");
+  } else if (cmd == 'r') {
+    Serial.print("Retrayendo "); Serial.print(valor); Serial.println(" pasos...");
+    step(-1, valor);
+    reportarPosicion();
+    Serial.println("Listo.");
+  } else if (cmd == 'v') {
+    stepDelayMs = valor;
+    Serial.print("Velocidad ajustada: "); Serial.print(valor); Serial.println(" ms entre micro-pasos");
+    Serial.println("Listo.");
+  } else {
+    Serial.println("Comando no reconocido. Usa e<pasos>, r<pasos>, v<ms>, s o p.");
   }
 }
