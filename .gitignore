@@ -13,8 +13,9 @@ dist/
 .env
 .env.local
 
-# Futuro: api (FastAPI)
+# api (FastAPI)
 __pycache__/
 *.pyc
 .venv/
 venv/
+*.db
