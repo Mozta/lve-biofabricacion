@@ -14,7 +14,7 @@ def _get_or_create(db: Session) -> models.Calibration:
         cal = models.Calibration(
             speed_ms=5,
             steps_per_mm=160.0,
-            syringe_id_mm=26.7,
+            syringe_id_mm=29.0,
             syringe_volume_ml=60.0,
             thread_pitch_mm=1.25,
         )

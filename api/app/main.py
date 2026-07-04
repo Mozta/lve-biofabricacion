@@ -35,7 +35,11 @@ def _migrate(eng):
             "UPDATE calibration SET steps_per_mm = 160.0 WHERE steps_per_mm IS NULL"
         ))
         conn.execute(text(
-            "UPDATE calibration SET syringe_id_mm = 26.7 WHERE syringe_id_mm IS NULL"
+            "UPDATE calibration SET syringe_id_mm = 29.0 WHERE syringe_id_mm IS NULL"
+        ))
+        # Actualiza el diámetro medido a 29mm en registros con el valor estimado anterior
+        conn.execute(text(
+            "UPDATE calibration SET syringe_id_mm = 29.0 WHERE syringe_id_mm = 26.7"
         ))
         conn.execute(text(
             "UPDATE calibration SET syringe_volume_ml = 60.0 WHERE syringe_volume_ml IS NULL"

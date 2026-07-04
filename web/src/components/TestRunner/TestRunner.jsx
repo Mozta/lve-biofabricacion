@@ -18,25 +18,25 @@ const DEFAULT_FORM = {
 };
 
 const PHASE_LABEL = {
-  extruding:     { text: 'Extruyendo…',        color: 'bg-accent/20 text-accent' },
-  'awaiting-mass': { text: 'Esperando masa',   color: 'bg-extrude/20 text-extrude' },
-  pausing:       { text: 'Pausa entre reps…',  color: 'bg-retract/20 text-retract' },
+  extruding:       { text: 'Extruyendo…',       color: 'bg-accent/10 text-accent' },
+  'awaiting-mass': { text: 'Esperando masa',     color: 'bg-extrude/10 text-extrude' },
+  pausing:         { text: 'Pausa entre reps…',  color: 'bg-retract/10 text-retract' },
 };
 
 export default function TestRunner() {
   const qc = useQueryClient();
-  const [form, setForm] = useState(DEFAULT_FORM);
-  const [phase, setPhase] = useState('idle');
-  const [testId, setTestId] = useState(null);
+  const [form, setForm]             = useState(DEFAULT_FORM);
+  const [phase, setPhase]           = useState('idle');
+  const [testId, setTestId]         = useState(null);
   const [currentRep, setCurrentRep] = useState(0);
-  const [results, setResults] = useState([]);
-  const [massInput, setMassInput] = useState('');
-  const [error, setError] = useState(null);
+  const [results, setResults]       = useState([]);
+  const [massInput, setMassInput]   = useState('');
+  const [error, setError]           = useState(null);
 
-  const nReps = Number(form.n_reps);
+  const nReps    = Number(form.n_reps);
   const expected = form.expected_mass_g === '' ? null : Number(form.expected_mass_g);
-  const running = phase !== 'idle' && phase !== 'done';
-  const stats = computeStats(results.map((r) => r.mass_g), expected);
+  const running  = phase !== 'idle' && phase !== 'done';
+  const stats    = computeStats(results.map((r) => r.mass_g), expected);
 
   async function extrudeRep(rep) {
     setPhase('extruding');
@@ -112,8 +112,8 @@ export default function TestRunner() {
   return (
     <div className="p-5 sm:p-8 max-w-3xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-zinc-100">Pruebas</h1>
-        <p className="text-muted text-sm mt-1">Corridas de extrusión con captura de masa</p>
+        <p className="text-muted text-xs uppercase tracking-widest font-medium mb-1">Captura de masa</p>
+        <h1 className="text-2xl font-bold text-stone-100">Pruebas</h1>
       </div>
 
       {phase === 'idle' && (
@@ -121,13 +121,13 @@ export default function TestRunner() {
       )}
 
       {running && (
-        <div className="bg-panel border border-border rounded-2xl p-5 flex flex-col gap-4">
+        <div className="bg-panel border border-border rounded-xl p-5 flex flex-col gap-4">
           <div className="flex items-center gap-3 flex-wrap">
-            <span className="bg-accent/15 text-accent text-xs font-medium px-3 py-1 rounded-full">
+            <span className="bg-accent/12 text-accent text-xs font-semibold px-3 py-1 rounded-full">
               Corrida #{testId}
             </span>
-            <span className="text-sm text-zinc-300">
-              Rep <strong>{Math.min(currentRep, nReps)}</strong>/{nReps}
+            <span className="text-sm text-stone-300">
+              Rep <strong className="text-stone-100">{Math.min(currentRep, nReps)}</strong>/{nReps}
             </span>
             {phaseInfo && (
               <span className={`text-xs font-medium px-3 py-1 rounded-full ${phaseInfo.color}`}>
@@ -138,50 +138,44 @@ export default function TestRunner() {
 
           {phase === 'awaiting-mass' && (
             <RepetitionInput
-              rep={currentRep}
-              total={nReps}
-              value={massInput}
-              onChange={setMassInput}
-              onSubmit={submitMass}
+              rep={currentRep} total={nReps}
+              value={massInput} onChange={setMassInput} onSubmit={submitMass}
             />
           )}
 
           <LiveResultsTable results={results} />
 
           {stats.n > 0 && (
-            <p className="text-muted text-xs">
-              Media parcial <strong className="text-zinc-300">{stats.mean.toFixed(3)} g</strong>
-              {' · '}stdev <strong className="text-zinc-300">{stats.stdev.toFixed(3)}</strong>
+            <p className="text-muted text-xs font-mono">
+              Media parcial <strong className="text-stone-300">{stats.mean.toFixed(3)} g</strong>
+              {' · '}stdev <strong className="text-stone-300">{stats.stdev.toFixed(3)}</strong>
             </p>
           )}
         </div>
       )}
 
       {phase === 'done' && (
-        <div className="bg-panel border border-border rounded-2xl p-5 flex flex-col gap-5">
-          <h2 className="text-base font-semibold text-zinc-100">Resumen — corrida #{testId}</h2>
+        <div className="bg-panel border border-border rounded-xl p-5 flex flex-col gap-5">
+          <h2 className="text-base font-semibold text-stone-100">Resumen — corrida #{testId}</h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
-              { label: 'Media', value: `${stats.mean.toFixed(3)} g` },
+              { label: 'Media',          value: `${stats.mean.toFixed(3)} g` },
               { label: 'Desv. estándar', value: `${stats.stdev.toFixed(3)} g` },
-              { label: '%CV', value: stats.cv != null ? `${stats.cv.toFixed(2)}%` : '—' },
-              { label: '%Error', value: stats.error_pct != null ? `${stats.error_pct.toFixed(2)}%` : '—' },
+              { label: '%CV',            value: stats.cv != null ? `${stats.cv.toFixed(2)}%` : '—' },
+              { label: '%Error',         value: stats.error_pct != null ? `${stats.error_pct.toFixed(2)}%` : '—' },
             ].map(({ label, value }) => (
               <div key={label} className="bg-panel2 border border-border rounded-xl p-3">
                 <p className="text-muted text-xs">{label}</p>
-                <p className="text-zinc-100 font-bold text-lg tabular-nums mt-1">{value}</p>
+                <p className="text-stone-100 font-bold text-lg tabular-nums mt-1 font-mono">{value}</p>
               </div>
             ))}
           </div>
-
           <LiveResultsTable results={results} />
-
           <p className="text-muted text-sm">Guardada en la base de datos. Revísala en Historial.</p>
-
           <motion.button
-            whileTap={{ scale: 0.97 }}
-            onClick={reset}
-            className="w-fit px-5 py-2.5 rounded-xl bg-extrude text-bg font-semibold text-sm hover:bg-emerald-400 transition"
+            whileTap={{ scale: 0.97 }} onClick={reset}
+            className="w-fit px-5 py-2.5 rounded-xl bg-extrude text-white font-semibold text-sm
+              hover:bg-accent transition"
           >
             Nueva prueba
           </motion.button>
@@ -189,7 +183,8 @@ export default function TestRunner() {
       )}
 
       {error && (
-        <div className="flex items-center gap-2 text-stop text-sm bg-stop/10 border border-stop/30 rounded-xl px-4 py-3 mt-4">
+        <div className="flex items-center gap-2 text-stop text-sm bg-stop/8 border border-stop/20
+          rounded-xl px-4 py-3 mt-4">
           <AlertCircle size={14} className="shrink-0" />
           {error}
         </div>
