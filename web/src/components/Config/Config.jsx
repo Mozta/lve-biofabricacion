@@ -36,7 +36,7 @@ export default function Config() {
       </div>
 
       {/* Variables de entorno */}
-      <div className="bg-panel border border-border rounded-xl divide-y divide-border mb-4">
+      <div className="bg-panel backdrop-blur-md border border-border rounded-xl divide-y divide-border mb-4">
         {ENV_VARS.map(({ name, example, description, icon: Icon }) => (
           <div key={name} className="flex items-start gap-4 p-4">
             <div className="mt-0.5 w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center shrink-0">
@@ -52,7 +52,7 @@ export default function Config() {
       </div>
 
       {/* Comandos de arranque */}
-      <div className="bg-panel border border-border rounded-xl p-5">
+      <div className="bg-panel backdrop-blur-md border border-border rounded-xl p-5">
         <div className="flex items-center gap-2 mb-3">
           <Terminal size={13} className="text-muted" />
           <h2 className="text-xs font-medium text-muted uppercase tracking-widest">Comandos de arranque</h2>

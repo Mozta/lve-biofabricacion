@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Gauge, FlaskConical, Clock, SlidersHorizontal, Settings, BookOpen } from 'lucide-react';
 import { Topbar } from './components/Layout/Topbar.jsx';
@@ -21,13 +21,29 @@ const VIEWS = {
 
 export default function App() {
   const [view, setView] = useState('control');
+  const [theme, setTheme] = useState(
+    () => localStorage.getItem('lve-theme') ?? 'dark'
+  );
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('lve-theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => setTheme(t => t === 'dark' ? 'light' : 'dark');
   const View = VIEWS[view].component;
 
   return (
-    <div className="h-screen bg-bg flex flex-col overflow-hidden">
+    <div className="h-screen flex flex-col overflow-hidden">
       <Topbar />
       <div className="flex flex-1 overflow-hidden">
-        <Sidebar views={VIEWS} active={view} onSelect={setView} />
+        <Sidebar
+          views={VIEWS}
+          active={view}
+          onSelect={setView}
+          theme={theme}
+          onToggleTheme={toggleTheme}
+        />
         <main className="flex-1 overflow-auto">
           <AnimatePresence mode="wait">
             <motion.div

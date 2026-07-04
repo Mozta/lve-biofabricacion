@@ -8,7 +8,7 @@ export function Topbar() {
   const position = status?.position ?? '—';
 
   return (
-    <header className="h-14 shrink-0 border-b border-border bg-panel flex items-center justify-between px-6 z-50">
+    <header className="h-14 shrink-0 border-b border-border bg-panel backdrop-blur-md flex items-center justify-between px-6 z-50">
       {/* Brand */}
       <div className="flex items-center gap-3">
         {/* Marca biomolecular */}

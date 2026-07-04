@@ -11,7 +11,7 @@ export default function TestForm({ form, setForm, onStart, disabled }) {
   const upd = (k) => (e) => setForm({ ...form, [k]: e.target.value });
 
   return (
-    <div className="bg-panel border border-border rounded-xl p-5">
+    <div className="bg-panel backdrop-blur-md border border-border rounded-xl p-5">
       <h2 className="text-sm font-semibold text-stone-100 mb-4">Nueva prueba de extrusión</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
         {[

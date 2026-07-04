@@ -85,7 +85,7 @@ export function ControlView() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
         {/* ─── Columna izquierda: Jeringa ─── */}
-        <div className="flex flex-col items-center gap-4 bg-panel border border-border rounded-xl p-6">
+        <div className="flex flex-col items-center gap-4 bg-panel backdrop-blur-md border border-border rounded-xl p-6">
           <div className="w-full flex items-center justify-between">
             <span className="text-xs font-medium text-muted uppercase tracking-widest">Jeringa</span>
             <button
@@ -152,7 +152,7 @@ export function ControlView() {
 
         {/* ─── Columna derecha: Controles ─── */}
         <div className="flex flex-col gap-4">
-          <div className="bg-panel border border-border rounded-xl p-5">
+          <div className="bg-panel backdrop-blur-md border border-border rounded-xl p-5">
             <h2 className="text-xs font-medium text-muted uppercase tracking-widest mb-4">Parámetros</h2>
             <VolumeInput
               calibration={cal}

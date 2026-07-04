@@ -121,7 +121,7 @@ export default function TestRunner() {
       )}
 
       {running && (
-        <div className="bg-panel border border-border rounded-xl p-5 flex flex-col gap-4">
+        <div className="bg-panel backdrop-blur-md border border-border rounded-xl p-5 flex flex-col gap-4">
           <div className="flex items-center gap-3 flex-wrap">
             <span className="bg-accent/12 text-accent text-xs font-semibold px-3 py-1 rounded-full">
               Corrida #{testId}
@@ -155,7 +155,7 @@ export default function TestRunner() {
       )}
 
       {phase === 'done' && (
-        <div className="bg-panel border border-border rounded-xl p-5 flex flex-col gap-5">
+        <div className="bg-panel backdrop-blur-md border border-border rounded-xl p-5 flex flex-col gap-5">
           <h2 className="text-base font-semibold text-stone-100">Resumen — corrida #{testId}</h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[

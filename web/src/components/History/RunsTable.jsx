@@ -34,7 +34,7 @@ export default function RunsTable() {
       )}
 
       {tests && tests.length > 0 && (
-        <div className="overflow-x-auto bg-panel border border-border rounded-xl">
+        <div className="overflow-x-auto bg-panel backdrop-blur-md border border-border rounded-xl">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border bg-panel2">

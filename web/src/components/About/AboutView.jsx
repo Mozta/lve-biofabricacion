@@ -39,7 +39,7 @@ export default function AboutView() {
       </div>
 
       {/* Descripción */}
-      <div className="bg-panel border border-border rounded-xl p-5 mb-4">
+      <div className="bg-panel backdrop-blur-md border border-border rounded-xl p-5 mb-4">
         <h2 className="text-xs font-medium text-muted uppercase tracking-widest mb-3">Sobre el proyecto</h2>
         <p className="text-stone-300 text-sm leading-relaxed">
           El LVE es un extrusor de gran volumen simplificado diseñado para validar la extrudibilidad
@@ -57,7 +57,7 @@ export default function AboutView() {
       </div>
 
       {/* Stack técnico */}
-      <div className="bg-panel border border-border rounded-xl p-5 mb-4">
+      <div className="bg-panel backdrop-blur-md border border-border rounded-xl p-5 mb-4">
         <h2 className="text-xs font-medium text-muted uppercase tracking-widest mb-3">Stack técnico</h2>
         <div className="flex flex-col gap-3">
           {STACK.map(({ icon: Icon, label }) => (
@@ -72,7 +72,7 @@ export default function AboutView() {
       </div>
 
       {/* Repositorio */}
-      <div className="bg-panel border border-border rounded-xl p-5 mb-4">
+      <div className="bg-panel backdrop-blur-md border border-border rounded-xl p-5 mb-4">
         <h2 className="text-xs font-medium text-muted uppercase tracking-widest mb-3">Repositorio</h2>
         <a
           href="https://github.com/Mozta/lve-biofabricacion"
@@ -90,7 +90,7 @@ export default function AboutView() {
       </div>
 
       {/* Autores */}
-      <div className="bg-panel border border-border rounded-xl p-5">
+      <div className="bg-panel backdrop-blur-md border border-border rounded-xl p-5">
         <h2 className="text-xs font-medium text-muted uppercase tracking-widest mb-4">Autores</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {AUTHORS.map(({ name, role, institution, initials, color }) => (

@@ -12,7 +12,7 @@ const fieldClass = `
   transition placeholder:text-muted/50
 `;
 
-const sectionClass = "bg-panel border border-border rounded-xl p-5 mb-4";
+const sectionClass = "bg-panel backdrop-blur-md border border-border rounded-xl p-5 mb-4";
 const labelClass = "flex flex-col gap-1.5 text-xs font-medium text-muted uppercase tracking-wide";
 
 export default function Calibration() {
